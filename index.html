@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hybrid Deduper</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- SheetJS for XLSX read -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- ExcelJS for XLSX write with styles -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Contact Deduplication Tool</h1>
+
+    <label>
+      Master List (.xlsx):
+      <input type="file" id="masterFile" accept=".xlsx" />
+    </label>
+
+    <label>
+      Smaller List (.xlsx):
+      <input type="file" id="smallFile" accept=".xlsx" />
+    </label>
+
+    <label>
+      Name & Address Similarity Threshold (0–1):
+      <input type="number" id="threshold" value="0.85" step="0.01" min="0" max="1" />
+    </label>
+
+    <button id="runBtn">Run Deduplication</button>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
