@@ -6,7 +6,8 @@ const SCHEMAS = {
     addressFields:["Address Line 1", "Address Line 2", "Address Line 3"],
     countryField: "Country ID",
     zipField:     "Zip Code",
-    stateField:   "State"
+    stateField:   "State",
+    customerField:"Customer #"
   },
   small: {
     emailField:   "Email Address",
@@ -97,7 +98,6 @@ async function exportStyledDuplicates(data, filename) {
     } else if (row._matchMethod === "name") {
       colIdx = headers.indexOf(SCHEMAS.small.nameField) + 1;
     } else if (row._matchMethod === "address") {
-      // highlight the Address 1 cell
       colIdx = headers.indexOf(SCHEMAS.small.addressFields[0]) + 1;
     }
 
@@ -249,6 +249,7 @@ runBtn.addEventListener("click", async () => {
     // collect results
     if (isDup) {
       duplicates.push({
+        [SCHEMAS.master.customerField]: matchInfo.matched[SCHEMAS.master.customerField] || "",
         ...s,
         _matchMethod:     matchInfo.method,
         _matchScore:      matchInfo.score || "",
