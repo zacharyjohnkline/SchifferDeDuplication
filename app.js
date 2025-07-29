@@ -4,7 +4,7 @@ const SCHEMAS = {
     emailField:   "Email Addresses",
     nameField:    "Full Name",
     addressFields:["Address Line 1", "Address Line 2", "Address Line 3"],
-    countryField: "Country ID",
+    countryField: "Country Id",
     zipField:     "Zip Code",
     stateField:   "State",
     customerField:"Customer #"
@@ -41,6 +41,17 @@ function similarity(a, b) {
   if (!a.length && !b.length) return 1;
   const dist = levenshtein(a, b);
   return (Math.max(a.length, b.length) - dist) / Math.max(a.length, b.length);
+}
+
+function stringifyRows(rows) {
+  return rows.map(row =>
+    Object.fromEntries(
+      Object.entries(row).map(([k, v]) =>
+        // if null/undefined, make ""; otherwise cast to String
+        [k, v == null ? "" : String(v)]
+      )
+    )
+  );
 }
 
 // UI refs
@@ -152,10 +163,14 @@ runBtn.addEventListener("click", async () => {
     return alert("Please select both files.");
   }
   runBtn.disabled = true;
+
+  
   setStatus("Loading master list…");
-  const master = await readXlsx(masterInput.files[0]);
+  const masterRaw = await readXlsx(masterInput.files[0]);
+  const master = stringifyRows(masterRaw);
   setStatus("Loading smaller list…");
-  const small  = await readXlsx(smallInput.files[0]);
+  const smallRaw  = await readXlsx(smallInput.files[0]);
+  const small = stringifyRows(smallRaw);
 
   const threshold     = parseFloat(thresholdEl.value) || 0.85;
   const duplicates    = [];
@@ -211,9 +226,9 @@ runBtn.addEventListener("click", async () => {
     // 3) Fuzzy address (after name)
     if (!isDup) {
       // require zip & state & country
-      const zipSmall     = (s[SCHEMAS.small.zipField] || "").trim();
-      const stateSmall   = (s[SCHEMAS.small.stateField] || "").trim();
-      const countrySmall = (s[SCHEMAS.small.countryField] || "").trim();
+      const zipSmall     = String(s[SCHEMAS.small.zipField] || "").trim();
+      const stateSmall   = String(s[SCHEMAS.small.stateField] || "").trim();
+      const countrySmall = String(s[SCHEMAS.small.countryField] || "").trim();
 
       // filter candidates by postal/state/country
       const candidates = master.filter(m => {
